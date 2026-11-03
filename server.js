@@ -1,45 +1,40 @@
 import express from "express";
-
 const app = express();
-
 const PORT = 3000
 
+
+const mensagens = [
+  { id: 1, usuario: "Ana", texto: "Bom dia!" },
+  { id: 2, usuario: "Pedro", texto: "Olá!" },
+  { id: 3, usuario: "Maria", texto: "Tudo bem?" },
+  { id: 4, usuario: "Lucas", texto: "Como vai?" },
+  { id: 5, usuario: "Carla", texto: "Até logo!" }
+];
+
+function Listarmensagem() { return mensagens; }
+
 app.get("/", (req, res) => {
-    res.send ("Boas-vindas à Central de Informações da Escola 🚀")
+    res.send ("Servidor rodando! 🚀")
 });
 
 app.get("/status", (req, res) => {
-    res.json({status_servidor: "online"});
+    res.json({status_servidor: "online", sprint: 2});
 });
 
-app.get ("/informacao", (req,res) => {
-    res.json ({nome:"SENAI", cidade:"Valinhos", tipo: "Privada"});
+app.get ("/sobre", (req,res) => {
+    res.send ("Projeto Mensageiro Local");
 });
 
-const cursos = [
-    {id:"1", nome: "DS"},
-    {id:"2", nome: "Elétrica"},
-    {id:"3", nome: "Mecânica"}
-];
-
-app.get("/cursos", (req, res) => {
-    res.json (cursos);
+app.get("/mensagens", (req, res) => {
+    res.json(Listarmensagem());
 });
 
-app.get ("/professor", (req,res) => {
-    res.json ({nome: "Eduardo", disciplina: "DS", email:"Eduardo@senai.br" })
+app.get("/mensagens/:id", (req, res) => {
+  const mensagem = mensagens.find(m => m.id === Number(req.params.id));
+  if (!mensagem) return res.status(404).json({ erro: "Não encontrada" });
+  res.json(mensagem);
 });
 
-const orientacoes = [
-    {status: "Status do servidor",
-     informacao: "informações importantes",
-     cursos: "Vizualizar os cursos disponiveis",
-     professor: "Informações sobre o professor"
-    }
-];
+app.get ("/total-mensagens", (req,res) => res.json({ total: mensagens.length}));
 
-app.get ("/ajuda", (req,res) => {
-    res.json (orientacoes)
-});
-
-app.listen(PORT, () => console.log (`Servidor em http://localhost:${PORT}`));
+app.listen(PORT, "0.0.0.0", () => console.log (`Servidor em http://localhost:${PORT}`));
